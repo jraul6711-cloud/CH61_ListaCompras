@@ -3,6 +3,14 @@ const txtNumber = document.getElementById("Number");
 const btnAgregar = document.getElementById("btnAgregar");
 const alertValidacionesTexto = document.getElementById("alertValidacionesTexto");
 const alertValidaciones = document.getElementById("alertValidaciones");
+const contadorProductos = document.getElementById("contadorProductos");
+const totalProductos = document.getElementbyId("totalProductos")
+let cont = 0;
+let totalEnProductos = 0;
+const precioTotal = document.getElementById("precioTotal")
+const productosTotal = document.getElementById("tablaListaCompras")
+const tablaListaCompras = document.getElementById("tablaListaCompras");
+const cuerpoTabla = tablaListaCompras.getElementsByTagName("tablaListaCompras")
 
 function validar_cantidad(cantidad) {
     if (cantidad.length == 0) {
@@ -49,7 +57,26 @@ btnAgregar.addEventListener("click", function (event) {
 
     if (isValid == true) {
         let precio = get_precio();
+        let row = `<tr>
+<td>${cont}</td>
+<td>${txtName.value}</td>
+<td>${txtNumber.value}</td>
+<td>${precio}</td>
+</tr>`;
         console.log(precio);
+        cont++;
+        totalEnProductos = Number(txtNumber.value);
+        costoTotal += precio * Number(txtNumber.value);
+
+        cuerpoTabla.insertAdjacentelement("beforeend", row)
+        contadorProductos.innerText = cont;
+        productosTotal.innerText = totalEnProductos;
+        precioTotal.innerText = new Intl.NumberFormat("es-MX",
+            { style: "currency", currency: "MXN" }).format(costoTotal);
+        
+        txtName.value = "";
+        txtNumber.value = "";
+        txtName.focus();
     }
 
 }); // btnAgregar
