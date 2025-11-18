@@ -13,6 +13,8 @@ const tablaListaCompras = document.getElementById("tablaListaCompras");
 // const cuerpoTabla = tablaListaCompras.getElementsByTagName("tbody");
 const cuerpoTabla = tablaListaCompras.querySelector("tbody");
 let costoTotal = 0;
+let datos = new Array(); //[];
+const btnClear = document.getElementById("btnClear");
 
 function validar_cantidad(cantidad) {
     if (cantidad.length == 0) {
@@ -65,7 +67,16 @@ btnAgregar.addEventListener("click", function (event) {
 <td>${txtNumber.value}</td>
 <td>${precio}</td>
 </tr>`;
-        console.log(precio);
+
+        let elemento = {
+            "cont": cont,
+            "nombre": txtName,
+            "cantidad": txtNumber.value,
+            "precio": precio
+        };
+        datos.push(elemento);
+        localStorage.setItem("datos", JSON.stringify(datos));
+
         cont++;
         totalEnProductos = Number(txtNumber.value);
         costoTotal += precio * Number(txtNumber.value);
@@ -92,8 +103,20 @@ btnAgregar.addEventListener("click", function (event) {
 
 window.addEventListener("load", function (event) {
     event.preventDefault();
+
+    if (this.localStorage.getItem("datos") != null) {
+        datos = JSON.parse(this.localStorage.getItem("datos"));
+        datos.forEach((e) => {
+            let row = `<tr>
+            <td>${e.cont}</td>
+            <td>${e.nombre}</td>
+            <td>${e.cantidad}</td>
+            <td>${e.precio}</td>`
+        })
+    }
+
     if (resumen != null) {
-        let resumen = this.localStorage.getItem("resumen");
+        resumen = this.localStorage.getItem("resumen");
         cont = resumen.cont;
         totalEnProductos = resumen.totalEnProductos;
         costoTotal = resumen.costoTotal;
@@ -104,3 +127,26 @@ window.addEventListener("load", function (event) {
     precioTotal.innerText = new Intl.NumberFormat("es-MX",
         { style: "currency", currency: "MXN" }).format(costoTotal);
 }); //window load
+
+
+btnClear.addEventListener("click", function (event) {
+    event.preventDefault();
+    txtName.style.border = "";
+    txtNumber.style.border = "";
+    alertValidacionesTexto.innerHTML = "";
+    alertValidaciones.style.display = "none";
+    cont = 0;
+    totalEnProductos = 0;
+    costoTotal = 0;
+    datos = [];
+
+    elemento = {};
+    txtName.value = "";
+    txtNumber.value = "";
+
+    contadorProductos.innerText = cont;
+    productosTotal.innerText = "";
+    precioTotal.innerText = "";
+    tablaListaCompras = "";
+
+}); // btnClear click
