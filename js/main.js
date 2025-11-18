@@ -4,13 +4,15 @@ const btnAgregar = document.getElementById("btnAgregar");
 const alertValidacionesTexto = document.getElementById("alertValidacionesTexto");
 const alertValidaciones = document.getElementById("alertValidaciones");
 const contadorProductos = document.getElementById("contadorProductos");
-const totalProductos = document.getElementbyId("totalProductos")
+const totalProductos = document.getElementById("totalProductos");
 let cont = 0;
 let totalEnProductos = 0;
-const precioTotal = document.getElementById("precioTotal")
-const productosTotal = document.getElementById("tablaListaCompras")
+const precioTotal = document.getElementById("precioTotal");
+const productosTotal = document.getElementById("productosTotal");
 const tablaListaCompras = document.getElementById("tablaListaCompras");
-const cuerpoTabla = tablaListaCompras.getElementsByTagName("tablaListaCompras")
+// const cuerpoTabla = tablaListaCompras.getElementsByTagName("tbody");
+const cuerpoTabla = tablaListaCompras.querySelector("tbody");
+let costoTotal = 0;
 
 function validar_cantidad(cantidad) {
     if (cantidad.length == 0) {
@@ -68,15 +70,37 @@ btnAgregar.addEventListener("click", function (event) {
         totalEnProductos = Number(txtNumber.value);
         costoTotal += precio * Number(txtNumber.value);
 
-        cuerpoTabla.insertAdjacentelement("beforeend", row)
+        cuerpoTabla.insertAdjacentHTML("beforeend", row)
         contadorProductos.innerText = cont;
         productosTotal.innerText = totalEnProductos;
         precioTotal.innerText = new Intl.NumberFormat("es-MX",
             { style: "currency", currency: "MXN" }).format(costoTotal);
-        
+
+        let resumen = {
+            "cont": cont,
+            "totalEnProductos": totalEnProductos,
+            "costoTotal": costoTotal
+        };
+
+        localStorage.setItem("resumen", JSON.stringify(resumen));
+
         txtName.value = "";
         txtNumber.value = "";
         txtName.focus();
-    }
+    }// isValid
+}); // btnAgregar click
 
-}); // btnAgregar
+window.addEventListener("load", function (event) {
+    event.preventDefault();
+    if (resumen != null) {
+        let resumen = this.localStorage.getItem("resumen");
+        cont = resumen.cont;
+        totalEnProductos = resumen.totalEnProductos;
+        costoTotal = resumen.costoTotal;
+    }// !null
+
+    contadorProductos.innerText = cont;
+    productosTotal.innerText = totalEnProductos;
+    precioTotal.innerText = new Intl.NumberFormat("es-MX",
+        { style: "currency", currency: "MXN" }).format(costoTotal);
+}); //window load
