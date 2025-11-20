@@ -52,12 +52,12 @@ btnAgregar.addEventListener("click", function (event) {
         isValid = false;
     } // Si Name == "" o bien Name length < 3
 
-    if (!validar_cantidad(txtNumber.value)) {
+    if (!validar_cantidad(txtNumber.value)) { // if (validar_cantidad(txtNumber.value) == false)
         txtNumber.style.border = "solid red";
         alertValidacionesTexto.innerHTML += "<br/><strong>La cantidad no es correcta</strong>";
         alertValidaciones.style.display = "block";
         isValid = false;
-    }//!validarCantidad
+    }// !validar_cantidad
 
     if (isValid == true) {
         let precio = get_precio();
@@ -70,15 +70,16 @@ btnAgregar.addEventListener("click", function (event) {
 
         let elemento = {
             "cont": cont,
-            "nombre": txtName,
+            "nombre": txtName.value,
             "cantidad": txtNumber.value,
             "precio": precio
         };
+
         datos.push(elemento);
         localStorage.setItem("datos", JSON.stringify(datos));
 
         cont++;
-        totalEnProductos = Number(txtNumber.value);
+        totalEnProductos += Number(txtNumber.value);
         costoTotal += precio * Number(txtNumber.value);
 
         cuerpoTabla.insertAdjacentHTML("beforeend", row)
@@ -107,13 +108,13 @@ window.addEventListener("load", function (event) {
     if (this.localStorage.getItem("datos") != null) {
         datos = JSON.parse(this.localStorage.getItem("datos"));
         datos.forEach((e) => {
-            let row = `<tr>
+            row = `<tr>
             <td>${e.cont}</td>
             <td>${e.nombre}</td>
             <td>${e.cantidad}</td>
-            <td>${e.precio}</td>`
-        })
-    }
+            <td>${e.precio}</td>`;
+        });
+    };
 
     if (resumen != null) {
         resumen = this.localStorage.getItem("resumen");
@@ -129,24 +130,60 @@ window.addEventListener("load", function (event) {
 }); //window load
 
 
+// btnClear.addEventListener("click", function (event) {
+//     event.preventDefault();
+
+//     txtName.style.border = "";
+//     txtNumber.style.border = "";
+//     alertValidacionesTexto.innerHTML = "";
+//     alertValidaciones.style.display = "none";
+//     cont = 0;
+//     totalEnProductos = 0;
+//     costoTotal = 0;
+
+//     elemento = {};
+//     txtName.value = "";
+//     txtNumber.value = "";
+
+//     contadorProductos.innerText = cont;
+//     productosTotal.innerText = "";
+//     precioTotal.innerText = "";
+
+
+//     localStorage.removeItem("datos");
+//     cuerpoTabla.HTML = "";
+
+// }); // btnClear click
+
+
+
 btnClear.addEventListener("click", function (event) {
     event.preventDefault();
+
+    // Reset visual
     txtName.style.border = "";
     txtNumber.style.border = "";
     alertValidacionesTexto.innerHTML = "";
     alertValidaciones.style.display = "none";
+
+    // Reset variables
     cont = 0;
     totalEnProductos = 0;
     costoTotal = 0;
     datos = [];
 
-    elemento = {};
     txtName.value = "";
     txtNumber.value = "";
 
+    // Reset contadores
     contadorProductos.innerText = cont;
-    productosTotal.innerText = "";
-    precioTotal.innerText = "";
-    tablaListaCompras = "";
+    productosTotal.innerText = 0;
+    precioTotal.innerText = "$0";
 
-}); // btnClear click
+    // 🔥 BORRAR TABLA CORRECTAMENTE
+    cuerpoTabla.innerHTML = "";
+
+    // Borrar localStorage
+    localStorage.removeItem("datos");
+    localStorage.removeItem("resumen");
+});
